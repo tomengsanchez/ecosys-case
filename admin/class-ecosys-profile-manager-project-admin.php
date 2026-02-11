@@ -69,15 +69,15 @@ class Ecosys_Profile_Manager_Project_Admin {
 		?>
 		<div style="padding: 15px 0;">
 			<div style="margin-bottom: 15px;">
-				<label for="project_name" style="display: block; margin-bottom: 5px; font-weight: bold;">
-					<?php _e( 'Project Name', 'ecosys-profile-manager' ); ?>
-				</label>
-				<input 
-					type="text" 
-					id="project_name" 
-					name="project_name" 
-					value="<?php echo esc_attr( $project_name ); ?>" 
-					style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"
+			<label for="project_name" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;">
+				<?php _e( 'Project Name', 'ecosys-profile-manager' ); ?>
+			</label>
+			<input 
+				type="text" 
+				id="project_name" 
+				name="project_name" 
+				value="<?php echo esc_attr( $project_name ); ?>" 
+				style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;"
 				/>
 			</div>
 		</div>

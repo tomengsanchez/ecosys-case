@@ -73,7 +73,7 @@ class Ecosys_Profile_Manager_Profile_Admin {
 		?>
 		<div style="padding: 15px 0;">
 			<div style="margin-bottom: 15px;">
-				<label for="profile_name" style="display: block; margin-bottom: 5px; font-weight: bold;">
+				<label for="profile_name" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;">
 					<?php _e( 'Name', 'ecosys-profile-manager' ); ?>
 				</label>
 				<input 
@@ -81,12 +81,12 @@ class Ecosys_Profile_Manager_Profile_Admin {
 					id="profile_name" 
 					name="profile_name" 
 					value="<?php echo esc_attr( $name ); ?>" 
-					style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"
+					style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;"
 				/>
 			</div>
 
 			<div style="margin-bottom: 15px;">
-				<label for="profile_contact_number" style="display: block; margin-bottom: 5px; font-weight: bold;">
+				<label for="profile_contact_number" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;">
 					<?php _e( 'Contact Number', 'ecosys-profile-manager' ); ?>
 				</label>
 				<input 
@@ -94,12 +94,12 @@ class Ecosys_Profile_Manager_Profile_Admin {
 					id="profile_contact_number" 
 					name="profile_contact_number" 
 					value="<?php echo esc_attr( $contact_number ); ?>" 
-					style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"
+					style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;"
 				/>
 			</div>
 
 			<div style="margin-bottom: 15px;">
-				<label for="profile_age" style="display: block; margin-bottom: 5px; font-weight: bold;">
+				<label for="profile_age" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;">
 					<?php _e( 'Age', 'ecosys-profile-manager' ); ?>
 				</label>
 				<input 
@@ -109,18 +109,18 @@ class Ecosys_Profile_Manager_Profile_Admin {
 					value="<?php echo esc_attr( $age ); ?>" 
 					min="0"
 					max="150"
-					style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"
+					style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;"
 				/>
 			</div>
 
 			<div style="margin-bottom: 15px;">
-				<label for="profile_sex" style="display: block; margin-bottom: 5px; font-weight: bold;">
+				<label for="profile_sex" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;">
 					<?php _e( 'Sex', 'ecosys-profile-manager' ); ?>
 				</label>
 				<select 
 					id="profile_sex" 
 					name="profile_sex" 
-					style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"
+					style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;"
 				>
 					<option value=""><?php _e( 'Select...', 'ecosys-profile-manager' ); ?></option>
 					<option value="male" <?php selected( $sex, 'male' ); ?>>
@@ -133,13 +133,13 @@ class Ecosys_Profile_Manager_Profile_Admin {
 			</div>
 
 			<div style="margin-bottom: 15px;">
-				<label for="profile_project_id" style="display: block; margin-bottom: 5px; font-weight: bold;">
+				<label for="profile_project_id" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;">
 					<?php _e( 'Project', 'ecosys-profile-manager' ); ?>
 				</label>
 				<select 
 					id="profile_project_id" 
 					name="profile_project_id" 
-					style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"
+					style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;"
 				>
 					<option value=""><?php _e( 'Select Project...', 'ecosys-profile-manager' ); ?></option>
 					<?php
@@ -293,20 +293,20 @@ class Ecosys_Profile_Manager_Profile_Admin {
 						<input type="hidden" id="ecosys-modal-structure-id" value="" />
 
 						<div style="margin-bottom: 15px;">
-							<label for="ecosys-modal-structure-tag" style="display: block; margin-bottom: 5px; font-weight: bold;"><?php _e( 'Structure Tag', 'ecosys-profile-manager' ); ?></label>
-							<input type="text" id="ecosys-modal-structure-tag" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" />
+							<label for="ecosys-modal-structure-tag" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;"><?php _e( 'Structure Tag', 'ecosys-profile-manager' ); ?></label>
+							<input type="text" id="ecosys-modal-structure-tag" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;" />
 						</div>
 
 						<div style="margin-bottom: 15px;">
-							<label style="display: block; margin-bottom: 5px; font-weight: bold;"><?php _e( 'Uploaded Images', 'ecosys-profile-manager' ); ?></label>
+							<label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;"><?php _e( 'Uploaded Images', 'ecosys-profile-manager' ); ?></label>
 							<input type="hidden" id="ecosys-modal-structure-pictures" value="" />
 							<button type="button" class="button" id="ecosys-modal-upload-pictures"><?php _e( 'Add Pictures', 'ecosys-profile-manager' ); ?></button>
 							<div id="ecosys-modal-pictures-preview" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;"></div>
 						</div>
 
 						<div style="margin-bottom: 20px;">
-							<label for="ecosys-modal-structure-description" style="display: block; margin-bottom: 5px; font-weight: bold;"><?php _e( 'Structure Description', 'ecosys-profile-manager' ); ?></label>
-							<textarea id="ecosys-modal-structure-description" rows="4" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"></textarea>
+							<label for="ecosys-modal-structure-description" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;"><?php _e( 'Structure Description', 'ecosys-profile-manager' ); ?></label>
+							<textarea id="ecosys-modal-structure-description" rows="4" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;"></textarea>
 						</div>
 
 						<div style="display: flex; gap: 8px; justify-content: flex-end;">

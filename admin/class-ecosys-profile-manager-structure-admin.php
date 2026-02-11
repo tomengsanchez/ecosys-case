@@ -81,13 +81,13 @@ class Ecosys_Profile_Manager_Structure_Admin {
 		?>
 		<div style="padding: 15px 0;">
 			<div style="margin-bottom: 15px;">
-				<label for="structure_profile_id" style="display: block; margin-bottom: 5px; font-weight: bold;">
-					<?php _e( 'Profile', 'ecosys-profile-manager' ); ?>
-				</label>
-				<select 
-					id="structure_profile_id" 
-					name="structure_profile_id" 
-					style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"
+			<label for="structure_profile_id" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;">
+				<?php _e( 'Profile', 'ecosys-profile-manager' ); ?>
+			</label>
+			<select 
+				id="structure_profile_id" 
+				name="structure_profile_id" 
+				style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;"
 				>
 					<option value=""><?php _e( 'Select Profile...', 'ecosys-profile-manager' ); ?></option>
 					<?php
@@ -112,20 +112,20 @@ class Ecosys_Profile_Manager_Structure_Admin {
 			</div>
 
 			<div style="margin-bottom: 15px;">
-				<label for="structure_tag" style="display: block; margin-bottom: 5px; font-weight: bold;">
-					<?php _e( 'Structure Tag', 'ecosys-profile-manager' ); ?>
-				</label>
-				<input 
-					type="text" 
-					id="structure_tag" 
-					name="structure_tag" 
-					value="<?php echo esc_attr( $structure_tag ); ?>" 
-					style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"
+			<label for="structure_tag" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;">
+				<?php _e( 'Structure Tag', 'ecosys-profile-manager' ); ?>
+			</label>
+			<input 
+				type="text" 
+				id="structure_tag" 
+				name="structure_tag" 
+				value="<?php echo esc_attr( $structure_tag ); ?>" 
+				style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;"
 				/>
 			</div>
 
 			<div style="margin-bottom: 15px;">
-				<label style="display: block; margin-bottom: 5px; font-weight: bold;">
+				<label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;">
 					<?php _e( 'Uploaded Images', 'ecosys-profile-manager' ); ?>
 				</label>
 				<input type="hidden" id="structure_pictures" name="structure_pictures" value="<?php echo esc_attr( implode( ',', $picture_ids ) ); ?>" />
@@ -164,14 +164,14 @@ class Ecosys_Profile_Manager_Structure_Admin {
 			</div>
 
 			<div style="margin-bottom: 15px;">
-				<label for="structure_description" style="display: block; margin-bottom: 5px; font-weight: bold;">
-					<?php _e( 'Structure Description', 'ecosys-profile-manager' ); ?>
-				</label>
-				<textarea 
-					id="structure_description" 
-					name="structure_description" 
-					rows="5" 
-					style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;"
+			<label for="structure_description" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;">
+				<?php _e( 'Structure Description', 'ecosys-profile-manager' ); ?>
+			</label>
+			<textarea 
+				id="structure_description" 
+				name="structure_description" 
+				rows="5" 
+				style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;"
 				><?php echo esc_textarea( $structure_description ); ?></textarea>
 			</div>
 		</div>
