@@ -87,7 +87,7 @@ class Ecosys_Profile_Manager_CPT {
 			'hierarchical'       => false,
 			'menu_position'      => 5,
 			'menu_icon'          => 'dashicons-businessman',
-			'supports'           => array( 'custom-fields' ),
+			'supports'           => array('custom-fields'),
 		);
 
 		register_post_type( 'profile', $args );
