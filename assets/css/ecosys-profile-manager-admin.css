@@ -1,0 +1,11 @@
+/**
+ * Ecosys Profile Manager - Admin Styles
+ * 
+ * @package Ecosys_Profile_Manager
+ * @since 1.0.0
+ */
+
+/* GLightbox caption - bottom left alignment */
+.glightbox-desc {
+	text-align: left !important;
+}
