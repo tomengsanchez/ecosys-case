@@ -29,6 +29,19 @@ class Ecosys_Profile_Manager_CPT {
 	private $plugin_name;
 
 	/**
+	 * Core capability that controls access to all Ecosys Profile Manager post types.
+	 *
+	 * Any new custom post types added by this plugin should use this capability
+	 * for their admin capabilities so that the Ecosys Admin role (and any role
+	 * granted this capability) can manage all plugin content.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string
+	 */
+	private $core_capability = 'manage_ecosys_profile_manager';
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
@@ -83,6 +96,8 @@ class Ecosys_Profile_Manager_CPT {
 			'query_var'          => true,
 			'rewrite'            => array( 'slug' => 'profile' ),
 			'capability_type'    => 'post',
+			'map_meta_cap'       => false,
+			'capabilities'       => $this->get_custom_capabilities(),
 			'has_archive'        => true,
 			'hierarchical'       => false,
 			'menu_position'      => 5,
@@ -128,6 +143,8 @@ class Ecosys_Profile_Manager_CPT {
 			'query_var'          => true,
 			'rewrite'            => array( 'slug' => 'project' ),
 			'capability_type'    => 'post',
+			'map_meta_cap'       => false,
+			'capabilities'       => $this->get_custom_capabilities(),
 			'has_archive'        => true,
 			'hierarchical'       => false,
 			'menu_position'      => 6,
@@ -173,6 +190,8 @@ class Ecosys_Profile_Manager_CPT {
 			'query_var'          => true,
 			'rewrite'            => array( 'slug' => 'profile-structure' ),
 			'capability_type'    => 'post',
+			'map_meta_cap'       => false,
+			'capabilities'       => $this->get_custom_capabilities(),
 			'has_archive'       => false,
 			'hierarchical'       => false,
 			'menu_position'      => null,
@@ -181,6 +200,37 @@ class Ecosys_Profile_Manager_CPT {
 
 		register_post_type( 'profile_structure', $args );
 
+	}
+
+	/**
+	 * Get the custom capability mapping used for all plugin post types.
+	 *
+	 * All admin actions (viewing lists, creating, editing, deleting) are gated
+	 * by the core capability so that only users with the Ecosys Admin role (or
+	 * any role granted this capability) can manage plugin content.
+	 *
+	 * Reading single posts on the front-end continues to use the default
+	 * WordPress `read` capability.
+	 *
+	 * @since 1.0.0
+	 * @return array
+	 */
+	private function get_custom_capabilities() {
+		return array(
+			'edit_post'              => $this->core_capability,
+			'read_post'              => 'read',
+			'delete_post'            => $this->core_capability,
+			'edit_posts'             => $this->core_capability,
+			'edit_others_posts'      => $this->core_capability,
+			'publish_posts'          => $this->core_capability,
+			'read_private_posts'     => $this->core_capability,
+			'delete_posts'           => $this->core_capability,
+			'delete_private_posts'   => $this->core_capability,
+			'delete_published_posts' => $this->core_capability,
+			'delete_others_posts'    => $this->core_capability,
+			'edit_private_posts'     => $this->core_capability,
+			'edit_published_posts'   => $this->core_capability,
+		);
 	}
 
 }

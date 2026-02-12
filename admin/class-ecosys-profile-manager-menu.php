@@ -63,10 +63,12 @@ class Ecosys_Profile_Manager_Menu {
 	 * @since    1.0.0
 	 */
 	public function add_admin_menu() {
+		$capability = 'manage_ecosys_profile_manager';
+
 		add_menu_page(
 			__( 'Ecosys Profile Management', 'ecosys-profile-manager' ),
 			__( 'Ecosys Profile Management', 'ecosys-profile-manager' ),
-			'manage_options',
+			$capability,
 			$this->menu_slug,
 			array( $this, 'render_dashboard_page' ),
 			'dashicons-groups',
@@ -77,7 +79,7 @@ class Ecosys_Profile_Manager_Menu {
 			$this->menu_slug,
 			__( 'Dashboard', 'ecosys-profile-manager' ),
 			__( 'Dashboard', 'ecosys-profile-manager' ),
-			'manage_options',
+			$capability,
 			$this->menu_slug,
 			array( $this, 'render_dashboard_page' )
 		);
@@ -86,7 +88,7 @@ class Ecosys_Profile_Manager_Menu {
 			$this->menu_slug,
 			__( 'Settings', 'ecosys-profile-manager' ),
 			__( 'Settings', 'ecosys-profile-manager' ),
-			'manage_options',
+			$capability,
 			$this->menu_slug . '-settings',
 			array( $this, 'render_settings_page' )
 		);
