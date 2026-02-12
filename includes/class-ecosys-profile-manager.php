@@ -175,6 +175,8 @@ class Ecosys_Profile_Manager {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'maybe_remove_default_dashboard', 999 );
+		$this->loader->add_action( 'load-index.php', $plugin_admin, 'maybe_redirect_dashboard' );
 
 		// Plugin menu
 		$plugin_menu = new Ecosys_Profile_Manager_Menu( $this->get_plugin_name(), $this->get_version() );
