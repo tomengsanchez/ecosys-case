@@ -179,6 +179,7 @@ class Ecosys_Profile_Manager {
 		// Plugin menu
 		$plugin_menu = new Ecosys_Profile_Manager_Menu( $this->get_plugin_name(), $this->get_version() );
 		$this->loader->add_action( 'admin_menu', $plugin_menu, 'add_admin_menu' );
+		$this->loader->add_filter( 'parent_file', $plugin_menu, 'set_parent_menu' );
 
 		// Profile metabox hooks
 		$profile_metabox = new Ecosys_Profile_Manager_Profile_MetaBox( $this->get_plugin_name() );

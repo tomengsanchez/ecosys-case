@@ -79,14 +79,12 @@ class Ecosys_Profile_Manager_CPT {
 			'public'             => true,
 			'publicly_queryable' => true,
 			'show_ui'            => true,
-			'show_in_menu'       => true,
+			'show_in_menu'       => 'ecosys-profile-management',
 			'query_var'          => true,
 			'rewrite'            => array( 'slug' => 'profile' ),
 			'capability_type'    => 'post',
 			'has_archive'        => true,
 			'hierarchical'       => false,
-			'menu_position'      => 5,
-			'menu_icon'          => 'dashicons-businessman',
 			'supports'           => array('custom-fields'),
 		);
 
@@ -124,14 +122,12 @@ class Ecosys_Profile_Manager_CPT {
 			'public'             => true,
 			'publicly_queryable' => true,
 			'show_ui'            => true,
-			'show_in_menu'       => true,
+			'show_in_menu'       => 'ecosys-profile-management',
 			'query_var'          => true,
 			'rewrite'            => array( 'slug' => 'project' ),
 			'capability_type'    => 'post',
 			'has_archive'        => true,
 			'hierarchical'       => false,
-			'menu_position'      => 6,
-			'menu_icon'          => 'dashicons-briefcase',
 			'supports'           => array( 'custom-fields', 'author' ),
 		);
 

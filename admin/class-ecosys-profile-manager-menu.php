@@ -90,6 +90,71 @@ class Ecosys_Profile_Manager_Menu {
 			$this->menu_slug . '-settings',
 			array( $this, 'render_settings_page' )
 		);
+
+		add_action( 'admin_menu', array( $this, 'reorder_submenu' ), 999 );
+	}
+
+	/**
+	 * Reorder submenu items: Dashboard, Profile, Projects, Settings.
+	 *
+	 * @since    1.0.0
+	 */
+	public function reorder_submenu() {
+		global $submenu;
+
+		if ( ! isset( $submenu[ $this->menu_slug ] ) ) {
+			return;
+		}
+
+		$items   = $submenu[ $this->menu_slug ];
+		$ordered = array();
+		$seen    = array();
+
+		// Desired order: Dashboard, Profile, Projects, Settings
+		$order = array(
+			$this->menu_slug,
+			'edit.php?post_type=profile',
+			'edit.php?post_type=project',
+			$this->menu_slug . '-settings',
+		);
+
+		foreach ( $order as $slug ) {
+			foreach ( $items as $item ) {
+				if ( isset( $item[2] ) && $item[2] === $slug ) {
+					$ordered[] = $item;
+					$seen[]    = $item[2];
+					break;
+				}
+			}
+		}
+
+		// Append any remaining items (e.g. Add New Profile, etc.)
+		foreach ( $items as $item ) {
+			$slug = isset( $item[2] ) ? $item[2] : '';
+			if ( $slug && ! in_array( $slug, $seen, true ) ) {
+				$ordered[] = $item;
+				$seen[]    = $slug;
+			}
+		}
+
+		$submenu[ $this->menu_slug ] = $ordered;
+	}
+
+	/**
+	 * Keep Ecosys Profile Management menu active when viewing Profile or Project screens.
+	 *
+	 * @since    1.0.0
+	 * @param    string $parent_file The parent file.
+	 * @return   string
+	 */
+	public function set_parent_menu( $parent_file ) {
+		global $current_screen;
+
+		if ( $current_screen && in_array( $current_screen->post_type, array( 'profile', 'project', 'profile_structure' ), true ) ) {
+			return $this->menu_slug;
+		}
+
+		return $parent_file;
 	}
 
 	/**
