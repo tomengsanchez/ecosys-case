@@ -84,6 +84,15 @@ class Ecosys_Profile_Manager_Menu {
 
 		add_submenu_page(
 			$this->menu_slug,
+			__( 'Grievance Redress', 'ecosys-profile-manager' ),
+			__( 'Grievance Redress', 'ecosys-profile-manager' ),
+			'manage_options',
+			$this->menu_slug . '-grievance-redress',
+			array( $this, 'render_grievance_redress_page' )
+		);
+
+		add_submenu_page(
+			$this->menu_slug,
 			__( 'Settings', 'ecosys-profile-manager' ),
 			__( 'Settings', 'ecosys-profile-manager' ),
 			'manage_options',
@@ -95,7 +104,7 @@ class Ecosys_Profile_Manager_Menu {
 	}
 
 	/**
-	 * Reorder submenu items: Dashboard, Profile, Projects, Settings.
+	 * Reorder submenu items: Dashboard, Profile, Grievance Redress, Projects, Settings.
 	 *
 	 * @since    1.0.0
 	 */
@@ -110,10 +119,11 @@ class Ecosys_Profile_Manager_Menu {
 		$ordered = array();
 		$seen    = array();
 
-		// Desired order: Dashboard, Profile, Projects, Settings
+		// Desired order: Dashboard, Profile, Grievance Redress, Projects, Settings
 		$order = array(
 			$this->menu_slug,
 			'edit.php?post_type=profile',
+			$this->menu_slug . '-grievance-redress',
 			'edit.php?post_type=project',
 			$this->menu_slug . '-settings',
 		);
@@ -167,6 +177,20 @@ class Ecosys_Profile_Manager_Menu {
 		<div class="wrap">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 			<p><?php esc_html_e( 'Welcome to Ecosys Profile Management. This is your dashboard.', 'ecosys-profile-manager' ); ?></p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render the Grievance Redress page.
+	 *
+	 * @since    1.0.0
+	 */
+	public function render_grievance_redress_page() {
+		?>
+		<div class="wrap">
+			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+			<p><?php esc_html_e( 'Grievance Redress content will appear here.', 'ecosys-profile-manager' ); ?></p>
 		</div>
 		<?php
 	}
