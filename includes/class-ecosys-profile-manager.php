@@ -94,6 +94,11 @@ class Ecosys_Profile_Manager {
 		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/class-ecosys-profile-manager-admin.php';
 
 		/**
+		 * The class responsible for the plugin admin menu.
+		 */
+		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/class-ecosys-profile-manager-menu.php';
+
+		/**
 		 * Profile admin classes.
 		 */
 		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/profile/class-ecosys-profile-manager-profile-metabox.php';
@@ -170,6 +175,10 @@ class Ecosys_Profile_Manager {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+
+		// Plugin menu
+		$plugin_menu = new Ecosys_Profile_Manager_Menu( $this->get_plugin_name(), $this->get_version() );
+		$this->loader->add_action( 'admin_menu', $plugin_menu, 'add_admin_menu' );
 
 		// Profile metabox hooks
 		$profile_metabox = new Ecosys_Profile_Manager_Profile_MetaBox( $this->get_plugin_name() );
