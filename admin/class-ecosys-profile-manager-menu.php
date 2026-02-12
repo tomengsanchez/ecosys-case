@@ -63,10 +63,11 @@ class Ecosys_Profile_Manager_Menu {
 	 * @since    1.0.0
 	 */
 	public function add_admin_menu() {
+		// Main menu and plugin pages: Ecosys Admin and Ecosys Officer (ecosys_manage).
 		add_menu_page(
 			__( 'Ecosys Profile Management', 'ecosys-profile-manager' ),
 			__( 'Ecosys Profile Management', 'ecosys-profile-manager' ),
-			'manage_options',
+			'ecosys_manage',
 			$this->menu_slug,
 			array( $this, 'render_dashboard_page' ),
 			'dashicons-groups',
@@ -77,7 +78,7 @@ class Ecosys_Profile_Manager_Menu {
 			$this->menu_slug,
 			__( 'Dashboard', 'ecosys-profile-manager' ),
 			__( 'Dashboard', 'ecosys-profile-manager' ),
-			'manage_options',
+			'ecosys_manage',
 			$this->menu_slug,
 			array( $this, 'render_dashboard_page' )
 		);
@@ -86,16 +87,17 @@ class Ecosys_Profile_Manager_Menu {
 			$this->menu_slug,
 			__( 'Grievance Redress', 'ecosys-profile-manager' ),
 			__( 'Grievance Redress', 'ecosys-profile-manager' ),
-			'manage_options',
+			'ecosys_manage',
 			$this->menu_slug . '-grievance-redress',
 			array( $this, 'render_grievance_redress_page' )
 		);
 
+		// Settings: Ecosys Admin only (ecosys_manage_settings). Ecosys Officer cannot view.
 		add_submenu_page(
 			$this->menu_slug,
 			__( 'Settings', 'ecosys-profile-manager' ),
 			__( 'Settings', 'ecosys-profile-manager' ),
-			'manage_options',
+			'ecosys_manage_settings',
 			$this->menu_slug . '-settings',
 			array( $this, 'render_settings_page' )
 		);

@@ -30,9 +30,16 @@ class Ecosys_Profile_Manager_Deactivator {
 	 */
 	public static function deactivate() {
 
-		// Clear any scheduled cron jobs
-		// Clean up temporary data if needed
-		// etc.
+		// Remove Ecosys capabilities from Administrator.
+		$admin = get_role( 'administrator' );
+		if ( $admin ) {
+			$admin->remove_cap( 'ecosys_manage' );
+			$admin->remove_cap( 'ecosys_manage_settings' );
+		}
+
+		// Remove Ecosys roles.
+		remove_role( 'ecosys_admin' );
+		remove_role( 'ecosys_officer' );
 
 	}
 
