@@ -94,19 +94,25 @@ class Ecosys_Profile_Manager {
 		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/class-ecosys-profile-manager-admin.php';
 
 		/**
-		 * The class responsible for defining profile-specific admin functionality.
+		 * Profile admin classes.
 		 */
-		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/class-ecosys-profile-manager-profile-admin.php';
+		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/profile/class-ecosys-profile-manager-profile-metabox.php';
+		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/profile/class-ecosys-profile-manager-profile-columns.php';
+		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/profile/class-ecosys-profile-manager-profile-database.php';
 
 		/**
-		 * The class responsible for defining project-specific admin functionality.
+		 * Project admin classes.
 		 */
-		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/class-ecosys-profile-manager-project-admin.php';
+		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/project/class-ecosys-profile-manager-project-metabox.php';
+		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/project/class-ecosys-profile-manager-project-columns.php';
+		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/project/class-ecosys-profile-manager-project-database.php';
 
 		/**
-		 * The class responsible for defining structure-specific admin functionality.
+		 * Profile Structure admin classes.
 		 */
-		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/class-ecosys-profile-manager-structure-admin.php';
+		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/profile-structure/class-ecosys-profile-manager-profile-structure-metabox.php';
+		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/profile-structure/class-ecosys-profile-manager-profile-structure-columns.php';
+		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/profile-structure/class-ecosys-profile-manager-profile-structure-database.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
@@ -165,34 +171,49 @@ class Ecosys_Profile_Manager {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 
-		// Profile admin hooks
-		$profile_admin = new Ecosys_Profile_Manager_Profile_Admin( $this->get_plugin_name() );
-		$this->loader->add_action( 'add_meta_boxes', $profile_admin, 'add_profile_metabox' );
-		$this->loader->add_action( 'save_post', $profile_admin, 'save_profile_metabox' );
-		$this->loader->add_action( 'add_meta_boxes', $profile_admin, 'add_structure_information_metabox' );
-		$this->loader->add_action( 'wp_ajax_ecosys_add_structure', $profile_admin, 'ajax_add_structure' );
-		$this->loader->add_action( 'wp_ajax_ecosys_get_structure', $profile_admin, 'ajax_get_structure' );
-		$this->loader->add_action( 'wp_ajax_ecosys_update_structure', $profile_admin, 'ajax_update_structure' );
+		// Profile metabox hooks
+		$profile_metabox = new Ecosys_Profile_Manager_Profile_MetaBox( $this->get_plugin_name() );
+		$this->loader->add_action( 'add_meta_boxes', $profile_metabox, 'add_profile_metabox' );
+		$this->loader->add_action( 'save_post', $profile_metabox, 'save_profile_metabox' );
+		$this->loader->add_action( 'add_meta_boxes', $profile_metabox, 'add_structure_information_metabox' );
+		$this->loader->add_action( 'wp_ajax_ecosys_add_structure', $profile_metabox, 'ajax_add_structure' );
+		$this->loader->add_action( 'wp_ajax_ecosys_get_structure', $profile_metabox, 'ajax_get_structure' );
+		$this->loader->add_action( 'wp_ajax_ecosys_update_structure', $profile_metabox, 'ajax_update_structure' );
 
-		// Structure admin hooks
-		$structure_admin = new Ecosys_Profile_Manager_Structure_Admin( $this->get_plugin_name() );
-		$this->loader->add_action( 'add_meta_boxes', $structure_admin, 'add_structure_metabox' );
-		$this->loader->add_action( 'save_post', $structure_admin, 'save_structure_metabox' );
-		$this->loader->add_filter( 'manage_profile_structure_posts_columns', $structure_admin, 'manage_structure_columns' );
-		$this->loader->add_action( 'manage_profile_structure_posts_custom_column', $structure_admin, 'populate_structure_columns', 10, 2 );
-		$this->loader->add_filter( 'manage_profile_posts_columns', $profile_admin, 'manage_profile_columns' );
-		$this->loader->add_action( 'manage_profile_posts_custom_column', $profile_admin, 'populate_profile_columns', 10, 2 );
-		$this->loader->add_action( 'restrict_manage_posts', $profile_admin, 'add_project_filter' );
-		$this->loader->add_filter( 'posts_search', $profile_admin, 'search_profile_by_name', 10, 2 );
-		$this->loader->add_action( 'pre_get_posts', $profile_admin, 'filter_by_project' );
+		// Profile columns hooks
+		$profile_columns = new Ecosys_Profile_Manager_Profile_Columns();
+		$this->loader->add_filter( 'manage_profile_posts_columns', $profile_columns, 'manage_profile_columns' );
+		$this->loader->add_action( 'manage_profile_posts_custom_column', $profile_columns, 'populate_profile_columns', 10, 2 );
 
-		// Project admin hooks
-		$project_admin = new Ecosys_Profile_Manager_Project_Admin( $this->get_plugin_name() );
-		$this->loader->add_action( 'add_meta_boxes', $project_admin, 'add_project_metabox' );
-		$this->loader->add_action( 'save_post', $project_admin, 'save_project_metabox' );
-		$this->loader->add_filter( 'manage_project_posts_columns', $project_admin, 'manage_project_columns' );
-		$this->loader->add_action( 'manage_project_posts_custom_column', $project_admin, 'populate_project_columns', 10, 2 );
-		$this->loader->add_filter( 'posts_search', $project_admin, 'search_project_by_name', 10, 2 );
+		// Profile database hooks
+		$profile_database = new Ecosys_Profile_Manager_Profile_Database();
+		$this->loader->add_action( 'restrict_manage_posts', $profile_database, 'add_project_filter' );
+		$this->loader->add_filter( 'posts_search', $profile_database, 'search_profile_by_name', 10, 2 );
+		$this->loader->add_action( 'pre_get_posts', $profile_database, 'filter_by_project' );
+
+		// Project metabox hooks
+		$project_metabox = new Ecosys_Profile_Manager_Project_MetaBox( $this->get_plugin_name() );
+		$this->loader->add_action( 'add_meta_boxes', $project_metabox, 'add_project_metabox' );
+		$this->loader->add_action( 'save_post', $project_metabox, 'save_project_metabox' );
+
+		// Project columns hooks
+		$project_columns = new Ecosys_Profile_Manager_Project_Columns();
+		$this->loader->add_filter( 'manage_project_posts_columns', $project_columns, 'manage_project_columns' );
+		$this->loader->add_action( 'manage_project_posts_custom_column', $project_columns, 'populate_project_columns', 10, 2 );
+
+		// Project database hooks
+		$project_database = new Ecosys_Profile_Manager_Project_Database();
+		$this->loader->add_filter( 'posts_search', $project_database, 'search_project_by_name', 10, 2 );
+
+		// Profile Structure metabox hooks
+		$structure_metabox = new Ecosys_Profile_Manager_Profile_Structure_MetaBox( $this->get_plugin_name() );
+		$this->loader->add_action( 'add_meta_boxes', $structure_metabox, 'add_structure_metabox' );
+		$this->loader->add_action( 'save_post', $structure_metabox, 'save_structure_metabox' );
+
+		// Profile Structure columns hooks
+		$structure_columns = new Ecosys_Profile_Manager_Profile_Structure_Columns();
+		$this->loader->add_filter( 'manage_profile_structure_posts_columns', $structure_columns, 'manage_structure_columns' );
+		$this->loader->add_action( 'manage_profile_structure_posts_custom_column', $structure_columns, 'populate_structure_columns', 10, 2 );
 
 	}
 
