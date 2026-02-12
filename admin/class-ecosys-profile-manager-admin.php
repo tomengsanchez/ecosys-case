@@ -43,7 +43,7 @@ class Ecosys_Profile_Manager_Admin {
 	 *
 	 * @since    1.0.0
 	 * @param    string $plugin_name The name of the plugin.
-	 * @param    string $version The version of this plugin.
+	 * @param    string $version     The version of this plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
 
@@ -103,6 +103,41 @@ class Ecosys_Profile_Manager_Admin {
 		wp_enqueue_script( 'glightbox', 'https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js', array(), '3.2.0', true );
 		wp_enqueue_style( 'glightbox', 'https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css', array(), '3.2.0' );
 
+	}
+
+	/**
+	 * Remove the default WordPress Dashboard menu for Ecosys-specific roles.
+	 *
+	 * This targets users who can manage Ecosys Profile Manager content but
+	 * do not have the full `manage_options` capability (i.e. not full site admins).
+	 *
+	 * @since 1.0.0
+	 */
+	public function maybe_remove_default_dashboard() {
+
+		if ( ! current_user_can( 'manage_ecosys_profile_manager' ) || current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		remove_menu_page( 'index.php' );
+	}
+
+	/**
+	 * Redirect Ecosys-specific roles away from the default Dashboard to the plugin dashboard.
+	 *
+	 * @since 1.0.0
+	 */
+	public function maybe_redirect_dashboard() {
+
+		if ( ! current_user_can( 'manage_ecosys_profile_manager' ) || current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		// This slug matches the one registered in Ecosys_Profile_Manager_Menu.
+		$dashboard_url = admin_url( 'admin.php?page=ecosys-profile-management' );
+
+		wp_safe_redirect( $dashboard_url );
+		exit;
 	}
 
 }
