@@ -99,6 +99,17 @@ class Ecosys_Profile_Manager {
 		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/class-ecosys-profile-manager-menu.php';
 
 		/**
+		 * Settings: options (get/save) and notification logic.
+		 */
+		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/settings/class-ecosys-profile-manager-settings-options.php';
+
+		/**
+		 * Admin page UIs (Dashboard, Settings).
+		 */
+		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/pages/class-ecosys-profile-manager-page-dashboard.php';
+		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/pages/class-ecosys-profile-manager-page-settings.php';
+
+		/**
 		 * Profile admin classes.
 		 */
 		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/profile/class-ecosys-profile-manager-profile-metabox.php';
@@ -178,8 +189,12 @@ class Ecosys_Profile_Manager {
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'maybe_remove_default_dashboard', 999 );
 		$this->loader->add_action( 'load-index.php', $plugin_admin, 'maybe_redirect_dashboard' );
 
-		// Plugin menu
-		$plugin_menu = new Ecosys_Profile_Manager_Menu( $this->get_plugin_name(), $this->get_version() );
+		// Settings options (used by Settings page and by new-profile notification)
+		$settings_options = new Ecosys_Profile_Manager_Settings_Options();
+		$this->loader->add_action( 'transition_post_status', $settings_options, 'maybe_notify_new_profile', 10, 3 );
+
+		// Plugin menu (submenu registration only; page UIs are in admin/pages)
+		$plugin_menu = new Ecosys_Profile_Manager_Menu( $this->get_plugin_name(), $this->get_version(), $settings_options );
 		$this->loader->add_action( 'admin_menu', $plugin_menu, 'add_admin_menu' );
 
 		// Profile metabox hooks
