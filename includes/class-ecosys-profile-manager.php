@@ -201,6 +201,7 @@ class Ecosys_Profile_Manager {
 		$this->loader->add_filter( 'posts_search', $profile_database, 'search_profile_by_name', 10, 2 );
 		$this->loader->add_action( 'pre_get_posts', $profile_database, 'filter_by_project' );
 		$this->loader->add_action( 'save_post', $profile_database, 'save_profile_meta' );
+		$this->loader->add_action( 'admin_notices', $profile_database, 'maybe_show_duplicate_title_notice' );
 
 		// Project metabox hooks
 		$project_metabox = new Ecosys_Profile_Manager_Project_MetaBox( $this->get_plugin_name() );

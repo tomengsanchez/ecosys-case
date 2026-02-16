@@ -155,16 +155,21 @@ class Ecosys_Profile_Manager_Profile_Database {
 			return;
 		}
 
-		// Control Number = post title (avoids auto-draft).
+		// Control Number = post title (avoids auto-draft). Must be unique.
 		if ( isset( $_POST['profile_control_number'] ) ) {
 			$control_number = sanitize_text_field( wp_unslash( $_POST['profile_control_number'] ) );
 			$title          = $control_number !== '' ? $control_number : __( 'Profile', 'ecosys-profile-manager' );
-			self::$updating_title = true;
-			wp_update_post( array(
-				'ID'         => $post_id,
-				'post_title' => $title,
-			) );
-			self::$updating_title = false;
+
+			if ( ! self::is_profile_title_unique( $title, $post_id ) ) {
+				set_transient( 'ecosys_profile_duplicate_title_' . get_current_user_id(), array( 'post_id' => $post_id, 'title' => $title ), 45 );
+			} else {
+				self::$updating_title = true;
+				wp_update_post( array(
+					'ID'         => $post_id,
+					'post_title' => $title,
+				) );
+				self::$updating_title = false;
+			}
 		}
 
 		if ( isset( $_POST['profile_name'] ) ) {
@@ -195,6 +200,53 @@ class Ecosys_Profile_Manager_Profile_Database {
 				}
 			}
 			update_post_meta( $post_id, '_profile_ses_data', $valid );
+		}
+	}
+
+	/**
+	 * Check if a profile title (Control Number) is unique, excluding a given post ID.
+	 *
+	 * @since    1.0.0
+	 * @param    string $title   Post title to check.
+	 * @param    int    $exclude Post ID to exclude (current profile).
+	 * @return   bool True if unique (or empty title), false if already used.
+	 */
+	private static function is_profile_title_unique( $title, $exclude = 0 ) {
+		if ( $title === '' ) {
+			return true;
+		}
+		global $wpdb;
+		$exclude = absint( $exclude );
+		$count   = $wpdb->get_var( $wpdb->prepare(
+			"SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type = 'profile' AND post_status NOT IN ('trash','auto-draft') AND LOWER(TRIM(post_title)) = LOWER(TRIM(%s)) AND ID != %d",
+			$title,
+			$exclude
+		) );
+		return (int) $count === 0;
+	}
+
+	/**
+	 * Show admin notice when Control Number (title) was duplicate and not saved.
+	 *
+	 * @since    1.0.0
+	 */
+	public function maybe_show_duplicate_title_notice() {
+		$key    = 'ecosys_profile_duplicate_title_' . get_current_user_id();
+		$stored = get_transient( $key );
+		if ( ! is_array( $stored ) || empty( $stored['post_id'] ) ) {
+			return;
+		}
+		delete_transient( $key );
+		$post_id = (int) $stored['post_id'];
+		$screen  = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( $screen && $screen->id === 'profile' && isset( $_GET['post'] ) && (int) $_GET['post'] === $post_id ) {
+			$title = isset( $stored['title'] ) ? $stored['title'] : '';
+			echo '<div class="notice notice-error is-dismissible"><p>';
+			echo esc_html__( 'Control Number is already in use by another profile. Please choose a unique value.', 'ecosys-profile-manager' );
+			if ( $title !== '' ) {
+				echo ' <strong>' . esc_html( sprintf( __( 'Duplicate value: %s', 'ecosys-profile-manager' ), $title ) ) . '</strong>';
+			}
+			echo '</p></div>';
 		}
 	}
 
