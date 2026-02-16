@@ -70,6 +70,8 @@ class Ecosys_Profile_Manager_Profile_MetaBox {
 		$age = get_post_meta( $post->ID, '_profile_age', true );
 		$sex = get_post_meta( $post->ID, '_profile_sex', true );
 		$project_id = get_post_meta( $post->ID, '_profile_project_id', true );
+		$ses_data   = get_post_meta( $post->ID, '_profile_ses_data', true );
+		$ses_data   = is_array( $ses_data ) ? $ses_data : ( ! empty( $ses_data ) ? (array) $ses_data : array() );
 		?>
 		<div style="padding: 15px 0;">
 			<div style="margin-bottom: 15px;">
@@ -163,8 +165,104 @@ class Ecosys_Profile_Manager_Profile_MetaBox {
 					?>
 				</select>
 			</div>
+
+			<div style="margin-bottom: 15px;">
+				<label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;">
+					<?php _e( 'SES Data', 'ecosys-profile-manager' ); ?>
+				</label>
+				<p style="color: #666; font-size: 11px; margin-bottom: 8px;">
+					<?php esc_html_e( 'Upload multiple files. Accepted: PDF, CSV, Excel (.xls, .xlsx), Word (.doc, .docx). Files are downloadable.', 'ecosys-profile-manager' ); ?>
+				</p>
+				<input type="hidden" id="profile_ses_data" name="profile_ses_data" value="<?php echo esc_attr( implode( ',', array_map( 'absint', $ses_data ) ) ); ?>" />
+				<button type="button" class="button" id="ecosys-ses-data-upload"><?php _e( 'Add SES Data Files', 'ecosys-profile-manager' ); ?></button>
+				<div id="ecosys-ses-data-list" style="margin-top: 10px;">
+					<?php
+					if ( ! empty( $ses_data ) ) {
+						foreach ( $ses_data as $att_id ) {
+							$att_id = absint( $att_id );
+							$file   = get_attached_file( $att_id );
+							$url    = wp_get_attachment_url( $att_id );
+							$name   = basename( $file );
+							if ( $url && $name ) {
+								?>
+								<div class="ecosys-ses-data-item" data-id="<?php echo esc_attr( $att_id ); ?>" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; padding: 6px; background: #f9f9f9; border-radius: 4px;">
+									<span class="dashicons dashicons-media-document" style="color: #666;"></span>
+									<a href="<?php echo esc_url( $url ); ?>" download><?php echo esc_html( $name ); ?></a>
+									<button type="button" class="button button-small ecosys-remove-ses-data" data-id="<?php echo esc_attr( $att_id ); ?>"><?php _e( 'Remove', 'ecosys-profile-manager' ); ?></button>
+								</div>
+								<?php
+							}
+						}
+					}
+					?>
+				</div>
+			</div>
 		</div>
+		<script>
+		(function($) {
+			var sesDataIds = [<?php echo implode( ',', array_map( 'absint', $ses_data ) ); ?>];
+			var mediaUploader;
+			function updateSesDataInput() {
+				$('#profile_ses_data').val(sesDataIds.join(','));
+			}
+			function appendSesDataItem(att) {
+				var id = att.id;
+				var name = att.filename || att.title || 'File #' + id;
+				var url = att.url || '';
+				var $item = $('<div class="ecosys-ses-data-item" data-id="' + id + '" style="display:flex;align-items:center;gap:8px;margin-bottom:6px;padding:6px;background:#f9f9f9;border-radius:4px;">');
+				$item.append('<span class="dashicons dashicons-media-document" style="color:#666;"></span>');
+				$item.append($('<a href="' + url + '" download></a>').text(name));
+				$item.append($('<button type="button" class="button button-small ecosys-remove-ses-data"><?php echo esc_js( __( 'Remove', 'ecosys-profile-manager' ) ); ?></button>').data('id', id));
+				$('#ecosys-ses-data-list').append($item);
+			}
+			$('#ecosys-ses-data-upload').on('click', function() {
+				if (mediaUploader) {
+					mediaUploader.open();
+					return;
+				}
+				mediaUploader = wp.media({
+					title: '<?php echo esc_js( __( 'Select SES Data Files (PDF, CSV, Excel, Word)', 'ecosys-profile-manager' ) ); ?>',
+					button: { text: '<?php echo esc_js( __( 'Add Files', 'ecosys-profile-manager' ) ); ?>' },
+					multiple: true
+				});
+				mediaUploader.on('select', function() {
+					var attachments = mediaUploader.state().get('selection').toJSON();
+					attachments.forEach(function(a) {
+						if (sesDataIds.indexOf(a.id) === -1) {
+							sesDataIds.push(a.id);
+							appendSesDataItem(a);
+						}
+					});
+					updateSesDataInput();
+				});
+				mediaUploader.open();
+			});
+			$(document).on('click', '.ecosys-remove-ses-data', function() {
+				var id = parseInt($(this).data('id'), 10);
+				sesDataIds = sesDataIds.filter(function(x) { return x !== id; });
+				updateSesDataInput();
+				$(this).closest('.ecosys-ses-data-item').remove();
+			});
+		})(jQuery);
+		</script>
 		<?php
+	}
+
+	/**
+	 * Allowed MIME types for SES Data files.
+	 *
+	 * @since    1.0.0
+	 * @return   array
+	 */
+	private static function get_ses_data_allowed_mimes() {
+		return array(
+			'pdf'  => 'application/pdf',
+			'csv'  => 'text/csv',
+			'xls'  => 'application/vnd.ms-excel',
+			'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+			'doc'  => 'application/msword',
+			'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		);
 	}
 
 	/**
@@ -211,6 +309,23 @@ class Ecosys_Profile_Manager_Profile_MetaBox {
 		// Save Project ID
 		if ( isset( $_POST['profile_project_id'] ) ) {
 			update_post_meta( $post_id, '_profile_project_id', absint( $_POST['profile_project_id'] ) );
+		}
+
+		// Save SES Data (file attachments - PDF, CSV, Excel, Word)
+		if ( isset( $_POST['profile_ses_data'] ) ) {
+			$raw      = sanitize_text_field( wp_unslash( $_POST['profile_ses_data'] ) );
+			$ids      = array_filter( array_map( 'absint', explode( ',', $raw ) ) );
+			$allowed  = self::get_ses_data_allowed_mimes();
+
+			$valid_ids = array();
+			foreach ( $ids as $att_id ) {
+				$mime = get_post_mime_type( $att_id );
+				if ( $mime && in_array( $mime, $allowed, true ) ) {
+					$valid_ids[] = $att_id;
+				}
+			}
+
+			update_post_meta( $post_id, '_profile_ses_data', $valid_ids );
 		}
 	}
 
