@@ -185,7 +185,6 @@ class Ecosys_Profile_Manager {
 		// Profile metabox hooks
 		$profile_metabox = new Ecosys_Profile_Manager_Profile_MetaBox( $this->get_plugin_name() );
 		$this->loader->add_action( 'add_meta_boxes', $profile_metabox, 'add_profile_metabox' );
-		$this->loader->add_action( 'save_post', $profile_metabox, 'save_profile_metabox' );
 		$this->loader->add_action( 'add_meta_boxes', $profile_metabox, 'add_structure_information_metabox' );
 		$this->loader->add_action( 'wp_ajax_ecosys_add_structure', $profile_metabox, 'ajax_add_structure' );
 		$this->loader->add_action( 'wp_ajax_ecosys_get_structure', $profile_metabox, 'ajax_get_structure' );
@@ -201,11 +200,11 @@ class Ecosys_Profile_Manager {
 		$this->loader->add_action( 'restrict_manage_posts', $profile_database, 'add_project_filter' );
 		$this->loader->add_filter( 'posts_search', $profile_database, 'search_profile_by_name', 10, 2 );
 		$this->loader->add_action( 'pre_get_posts', $profile_database, 'filter_by_project' );
+		$this->loader->add_action( 'save_post', $profile_database, 'save_profile_meta' );
 
 		// Project metabox hooks
 		$project_metabox = new Ecosys_Profile_Manager_Project_MetaBox( $this->get_plugin_name() );
 		$this->loader->add_action( 'add_meta_boxes', $project_metabox, 'add_project_metabox' );
-		$this->loader->add_action( 'save_post', $project_metabox, 'save_project_metabox' );
 
 		// Project columns hooks
 		$project_columns = new Ecosys_Profile_Manager_Project_Columns();
@@ -215,11 +214,15 @@ class Ecosys_Profile_Manager {
 		// Project database hooks
 		$project_database = new Ecosys_Profile_Manager_Project_Database();
 		$this->loader->add_filter( 'posts_search', $project_database, 'search_project_by_name', 10, 2 );
+		$this->loader->add_action( 'save_post', $project_database, 'save_project_meta' );
 
 		// Profile Structure metabox hooks
 		$structure_metabox = new Ecosys_Profile_Manager_Profile_Structure_MetaBox( $this->get_plugin_name() );
 		$this->loader->add_action( 'add_meta_boxes', $structure_metabox, 'add_structure_metabox' );
-		$this->loader->add_action( 'save_post', $structure_metabox, 'save_structure_metabox' );
+
+		// Profile Structure database hooks
+		$structure_database = new Ecosys_Profile_Manager_Profile_Structure_Database();
+		$this->loader->add_action( 'save_post', $structure_database, 'save_structure_meta' );
 
 		// Profile Structure columns hooks
 		$structure_columns = new Ecosys_Profile_Manager_Profile_Structure_Columns();
