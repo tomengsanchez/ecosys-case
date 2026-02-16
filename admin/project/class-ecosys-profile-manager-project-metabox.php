@@ -84,31 +84,4 @@ class Ecosys_Profile_Manager_Project_MetaBox {
 		<?php
 	}
 
-	/**
-	 * Save the project metabox data.
-	 *
-	 * @since    1.0.0
-	 * @param    int $post_id The post ID.
-	 */
-	public function save_project_metabox( $post_id ) {
-		// Verify nonce
-		if ( ! isset( $_POST['project_metabox_nonce_field'] ) ) {
-			return;
-		}
-
-		if ( ! wp_verify_nonce( $_POST['project_metabox_nonce_field'], 'project_metabox_nonce' ) ) {
-			return;
-		}
-
-		// Check user capabilities
-		if ( ! current_user_can( 'edit_post', $post_id ) ) {
-			return;
-		}
-
-		// Save Project Name
-		if ( isset( $_POST['project_name'] ) ) {
-			update_post_meta( $post_id, '_project_name', sanitize_text_field( $_POST['project_name'] ) );
-		}
-	}
-
 }

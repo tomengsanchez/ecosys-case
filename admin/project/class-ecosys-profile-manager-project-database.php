@@ -60,4 +60,25 @@ class Ecosys_Profile_Manager_Project_Database {
 		return $search;
 	}
 
+	/**
+	 * Save project meta on save_post (Project CPT).
+	 *
+	 * @since    1.0.0
+	 * @param    int $post_id The post ID.
+	 */
+	public function save_project_meta( $post_id ) {
+		if ( get_post_type( $post_id ) !== 'project' ) {
+			return;
+		}
+		if ( ! isset( $_POST['project_metabox_nonce_field'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['project_metabox_nonce_field'] ) ), 'project_metabox_nonce' ) ) {
+			return;
+		}
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
+			return;
+		}
+		if ( isset( $_POST['project_name'] ) ) {
+			update_post_meta( $post_id, '_project_name', sanitize_text_field( wp_unslash( $_POST['project_name'] ) ) );
+		}
+	}
+
 }
