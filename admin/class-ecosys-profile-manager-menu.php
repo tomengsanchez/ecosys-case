@@ -46,6 +46,15 @@ class Ecosys_Profile_Manager_Menu {
 	private $menu_slug = 'ecosys-profile-management';
 
 	/**
+	 * GRM menu slug.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string $grm_menu_slug
+	 */
+	private $grm_menu_slug = 'ecosys-grm';
+
+	/**
 	 * Settings options instance (for Settings page).
 	 *
 	 * @since    1.0.0
@@ -103,6 +112,44 @@ class Ecosys_Profile_Manager_Menu {
 			$this->menu_slug . '-settings',
 			array( $this, 'render_settings_page' )
 		);
+
+		// GRM menu
+		add_menu_page(
+			__( 'GRM', 'ecosys-profile-manager' ),
+			__( 'GRM', 'ecosys-profile-manager' ),
+			$capability,
+			$this->grm_menu_slug,
+			array( $this, 'render_grm_dashboard_page' ),
+			'dashicons-portfolio',
+			31
+		);
+
+		add_submenu_page(
+			$this->grm_menu_slug,
+			__( 'Dashboard', 'ecosys-profile-manager' ),
+			__( 'Dashboard', 'ecosys-profile-manager' ),
+			$capability,
+			$this->grm_menu_slug,
+			array( $this, 'render_grm_dashboard_page' )
+		);
+
+		add_submenu_page(
+			$this->grm_menu_slug,
+			__( 'Grievances', 'ecosys-profile-manager' ),
+			__( 'Grievances', 'ecosys-profile-manager' ),
+			$capability,
+			$this->grm_menu_slug . '-grievances',
+			array( $this, 'render_grm_grievances_page' )
+		);
+
+		add_submenu_page(
+			$this->grm_menu_slug,
+			__( 'Library', 'ecosys-profile-manager' ),
+			__( 'Library', 'ecosys-profile-manager' ),
+			$capability,
+			$this->grm_menu_slug . '-library',
+			array( $this, 'render_grm_library_page' )
+		);
 	}
 
 	/**
@@ -123,6 +170,36 @@ class Ecosys_Profile_Manager_Menu {
 	public function render_settings_page() {
 		$options = $this->settings_options ? $this->settings_options : new Ecosys_Profile_Manager_Settings_Options();
 		$page    = new Ecosys_Profile_Manager_Page_Settings( $options );
+		$page->render();
+	}
+
+	/**
+	 * Render GRM Dashboard page (delegates to page class).
+	 *
+	 * @since    1.0.0
+	 */
+	public function render_grm_dashboard_page() {
+		$page = new Ecosys_Profile_Manager_Page_GRM_Dashboard();
+		$page->render();
+	}
+
+	/**
+	 * Render GRM Grievances page (delegates to page class).
+	 *
+	 * @since    1.0.0
+	 */
+	public function render_grm_grievances_page() {
+		$page = new Ecosys_Profile_Manager_Page_GRM_Grievances();
+		$page->render();
+	}
+
+	/**
+	 * Render GRM Library page (delegates to page class).
+	 *
+	 * @since    1.0.0
+	 */
+	public function render_grm_library_page() {
+		$page = new Ecosys_Profile_Manager_Page_GRM_Library();
 		$page->render();
 	}
 }

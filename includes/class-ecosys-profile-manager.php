@@ -104,10 +104,13 @@ class Ecosys_Profile_Manager {
 		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/settings/class-ecosys-profile-manager-settings-options.php';
 
 		/**
-		 * Admin page UIs (Dashboard, Settings).
+		 * Admin page UIs (Dashboard, Settings, GRM).
 		 */
 		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/pages/class-ecosys-profile-manager-page-dashboard.php';
 		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/pages/class-ecosys-profile-manager-page-settings.php';
+		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/pages/class-ecosys-profile-manager-page-grm-dashboard.php';
+		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/pages/class-ecosys-profile-manager-page-grm-grievances.php';
+		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/pages/class-ecosys-profile-manager-page-grm-library.php';
 
 		/**
 		 * Profile admin classes.
