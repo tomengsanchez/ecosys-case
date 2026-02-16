@@ -189,6 +189,7 @@ class Ecosys_Profile_Manager {
 		$this->loader->add_action( 'wp_ajax_ecosys_add_structure', $profile_metabox, 'ajax_add_structure' );
 		$this->loader->add_action( 'wp_ajax_ecosys_get_structure', $profile_metabox, 'ajax_get_structure' );
 		$this->loader->add_action( 'wp_ajax_ecosys_update_structure', $profile_metabox, 'ajax_update_structure' );
+		$this->loader->add_action( 'wp_ajax_ecosys_delete_structure', $profile_metabox, 'ajax_delete_structure' );
 
 		// Profile columns hooks
 		$profile_columns = new Ecosys_Profile_Manager_Profile_Columns();
@@ -201,6 +202,7 @@ class Ecosys_Profile_Manager {
 		$this->loader->add_filter( 'posts_search', $profile_database, 'search_profile_by_name', 10, 2 );
 		$this->loader->add_action( 'pre_get_posts', $profile_database, 'filter_by_project' );
 		$this->loader->add_action( 'save_post', $profile_database, 'save_profile_meta' );
+		$this->loader->add_action( 'admin_notices', $profile_database, 'maybe_show_duplicate_title_notice' );
 
 		// Project metabox hooks
 		$project_metabox = new Ecosys_Profile_Manager_Project_MetaBox( $this->get_plugin_name() );

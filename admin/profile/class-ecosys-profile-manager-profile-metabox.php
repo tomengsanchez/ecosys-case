@@ -64,6 +64,8 @@ class Ecosys_Profile_Manager_Profile_MetaBox {
 	public function render_profile_metabox( $post ) {
 		wp_nonce_field( 'profile_metabox_nonce', 'profile_metabox_nonce_field' );
 
+		// Control Number = post title (so post is not auto-draft)
+		$control_number = $post->post_title;
 		// Get existing values
 		$name = get_post_meta( $post->ID, '_profile_name', true );
 		$contact_number = get_post_meta( $post->ID, '_profile_contact_number', true );
@@ -74,6 +76,20 @@ class Ecosys_Profile_Manager_Profile_MetaBox {
 		$ses_data   = is_array( $ses_data ) ? $ses_data : ( ! empty( $ses_data ) ? (array) $ses_data : array() );
 		?>
 		<div style="padding: 15px 0;">
+			<div style="margin-bottom: 15px;">
+				<label for="profile_control_number" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;">
+					<?php _e( 'Control Number', 'ecosys-profile-manager' ); ?>
+				</label>
+				<input 
+					type="text" 
+					id="profile_control_number" 
+					name="profile_control_number" 
+					value="<?php echo esc_attr( $control_number ); ?>" 
+					style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;"
+				/>
+				<p style="color: #666; font-size: 11px; margin-top: 4px;"><?php esc_html_e( 'Used as the profile title so the post is saved properly.', 'ecosys-profile-manager' ); ?></p>
+			</div>
+
 			<div style="margin-bottom: 15px;">
 				<label for="profile_name" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;">
 					<?php _e( 'Name', 'ecosys-profile-manager' ); ?>
@@ -408,7 +424,10 @@ class Ecosys_Profile_Manager_Profile_MetaBox {
 			<td><?php echo esc_html( $tag ?: '—' ); ?></td>
 			<td><?php echo $images_html; ?></td>
 			<td><?php echo esc_html( wp_trim_words( $description, 10 ) ?: '—' ); ?></td>
-			<td><button type="button" class="button button-small ecosys-edit-structure" data-structure-id="<?php echo esc_attr( $structure->ID ); ?>"><?php _e( 'Edit', 'ecosys-profile-manager' ); ?></button></td>
+				<td>
+				<button type="button" class="button button-small ecosys-edit-structure" data-structure-id="<?php echo esc_attr( $structure->ID ); ?>"><?php _e( 'Edit', 'ecosys-profile-manager' ); ?></button>
+				<button type="button" class="button button-small ecosys-delete-structure" data-structure-id="<?php echo esc_attr( $structure->ID ); ?>"><?php _e( 'Delete', 'ecosys-profile-manager' ); ?></button>
+			</td>
 		</tr>
 		<?php
 		return ob_get_clean();
@@ -420,8 +439,9 @@ class Ecosys_Profile_Manager_Profile_MetaBox {
 	 * @since    1.0.0
 	 */
 	private function render_structure_dialog_script() {
-		$ajax_nonce  = wp_create_nonce( 'ecosys_add_structure' );
-		$edit_nonce  = wp_create_nonce( 'ecosys_edit_structure' );
+		$ajax_nonce   = wp_create_nonce( 'ecosys_add_structure' );
+		$edit_nonce   = wp_create_nonce( 'ecosys_edit_structure' );
+		$delete_nonce = wp_create_nonce( 'ecosys_delete_structure' );
 		?>
 		<script>
 		(function($) {
@@ -472,6 +492,28 @@ class Ecosys_Profile_Manager_Profile_MetaBox {
 			$('#ecosys-open-add-structure-dialog').on('click', function() { openModal(); });
 			$(document).on('click', '.ecosys-edit-structure', function() {
 				openModal($(this).data('structure-id'));
+			});
+			$(document).on('click', '.ecosys-delete-structure', function() {
+				var structureId = $(this).data('structure-id');
+				if (!confirm('<?php echo esc_js( __( 'Move this structure to the Trash?', 'ecosys-profile-manager' ) ); ?>')) return;
+				var $row = $('tr[data-structure-id="' + structureId + '"]');
+				$.post(ajaxurl, {
+					action: 'ecosys_delete_structure',
+					nonce: '<?php echo esc_js( $delete_nonce ); ?>',
+					structure_id: structureId
+				}).done(function(res) {
+					if (res.success) {
+						$row.remove();
+						var $tbody = $('#ecosys-structures-tbody');
+						if ($tbody.find('tr').length === 0) {
+							$('#ecosys-structure-list-wrap').html('<p class="ecosys-no-structures-msg" style="color:#666;margin-top:10px;"><?php echo esc_js( __( 'No structures added yet. Click "Add Structure" to add one.', 'ecosys-profile-manager' ) ); ?></p>');
+						}
+					} else {
+						alert(res.data && res.data.message ? res.data.message : '<?php echo esc_js( __( 'An error occurred.', 'ecosys-profile-manager' ) ); ?>');
+					}
+				}).fail(function() {
+					alert('<?php echo esc_js( __( 'An error occurred.', 'ecosys-profile-manager' ) ); ?>');
+				});
 			});
 			$('#ecosys-modal-cancel').on('click', closeModal);
 			$modal.on('click', function(e) {
@@ -696,6 +738,31 @@ class Ecosys_Profile_Manager_Profile_MetaBox {
 		$row_html  = $this->get_structure_row_html( $structure );
 
 		wp_send_json_success( array( 'row_html' => $row_html, 'structure_id' => $structure_id ) );
+	}
+
+	/**
+	 * AJAX handler to delete a structure from the profile edit screen.
+	 *
+	 * @since    1.0.0
+	 */
+	public function ajax_delete_structure() {
+		check_ajax_referer( 'ecosys_delete_structure', 'nonce' );
+
+		$structure_id = isset( $_POST['structure_id'] ) ? absint( $_POST['structure_id'] ) : 0;
+		if ( ! $structure_id || get_post_type( $structure_id ) !== 'profile_structure' ) {
+			wp_send_json_error( array( 'message' => __( 'Invalid structure.', 'ecosys-profile-manager' ) ) );
+		}
+
+		if ( ! current_user_can( 'delete_post', $structure_id ) ) {
+			wp_send_json_error( array( 'message' => __( 'Permission denied.', 'ecosys-profile-manager' ) ) );
+		}
+
+		$deleted = wp_trash_post( $structure_id );
+		if ( ! $deleted ) {
+			wp_send_json_error( array( 'message' => __( 'Could not delete structure.', 'ecosys-profile-manager' ) ) );
+		}
+
+		wp_send_json_success();
 	}
 
 }
