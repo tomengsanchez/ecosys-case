@@ -1,6 +1,6 @@
 <?php
 /**
- * The plugin menu registration.
+ * Plugin menu and submenu registration only.
  *
  * @link       https://ecosys.io
  * @since      1.0.0
@@ -10,7 +10,7 @@
  */
 
 /**
- * Registers the plugin admin menu and submenus.
+ * Registers the admin menu and submenus. Page content is rendered by separate page classes.
  *
  * @package    Ecosys_Profile_Manager
  * @subpackage Ecosys_Profile_Manager/admin
@@ -37,7 +37,7 @@ class Ecosys_Profile_Manager_Menu {
 	private $version;
 
 	/**
-	 * The menu slug.
+	 * Menu slug (used for main menu and dashboard).
 	 *
 	 * @since    1.0.0
 	 * @access   private
@@ -46,19 +46,30 @@ class Ecosys_Profile_Manager_Menu {
 	private $menu_slug = 'ecosys-profile-management';
 
 	/**
+	 * Settings options instance (for Settings page).
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      Ecosys_Profile_Manager_Settings_Options|null
+	 */
+	private $settings_options;
+
+	/**
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
-	 * @param    string $plugin_name The name of the plugin.
-	 * @param    string $version     The version of this plugin.
+	 * @param    string                                            $plugin_name      The name of the plugin.
+	 * @param    string                                            $version          The version.
+	 * @param    Ecosys_Profile_Manager_Settings_Options|null $settings_options Optional. For Settings page save/load.
 	 */
-	public function __construct( $plugin_name, $version ) {
-		$this->plugin_name = $plugin_name;
-		$this->version     = $version;
+	public function __construct( $plugin_name, $version, $settings_options = null ) {
+		$this->plugin_name      = $plugin_name;
+		$this->version          = $version;
+		$this->settings_options = $settings_options;
 	}
 
 	/**
-	 * Register the admin menu.
+	 * Register the admin menu and submenus.
 	 *
 	 * @since    1.0.0
 	 */
@@ -95,31 +106,23 @@ class Ecosys_Profile_Manager_Menu {
 	}
 
 	/**
-	 * Render the Dashboard page.
+	 * Render the Dashboard page (delegates to page class).
 	 *
 	 * @since    1.0.0
 	 */
 	public function render_dashboard_page() {
-		?>
-		<div class="wrap">
-			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-			<p><?php esc_html_e( 'Welcome to Ecosys Profile Management. This is your dashboard.', 'ecosys-profile-manager' ); ?></p>
-		</div>
-		<?php
+		$page = new Ecosys_Profile_Manager_Page_Dashboard();
+		$page->render();
 	}
 
 	/**
-	 * Render the Settings page.
+	 * Render the Settings page (delegates to page class).
 	 *
 	 * @since    1.0.0
 	 */
 	public function render_settings_page() {
-		?>
-		<div class="wrap">
-			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-			<p><?php esc_html_e( 'Plugin settings will appear here.', 'ecosys-profile-manager' ); ?></p>
-		</div>
-		<?php
+		$options = $this->settings_options ? $this->settings_options : new Ecosys_Profile_Manager_Settings_Options();
+		$page    = new Ecosys_Profile_Manager_Page_Settings( $options );
+		$page->render();
 	}
-
 }
