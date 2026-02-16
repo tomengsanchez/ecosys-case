@@ -3,7 +3,7 @@
  * Plugin Name: Ecosys Profile Manager
  * Plugin URI: https://ecosys.io/plugins/profile-manager
  * Description: A comprehensive profile management plugin for WordPress users and advanced user profiles.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Ecosys
  * Author URI: https://ecosys.io
  * License: GPL-2.0+
@@ -22,7 +22,7 @@ if ( ! defined( 'WPINC' ) ) {
 /**
  * Currently plugin version.
  */
-define( 'ECOSYS_PROFILE_MANAGER_VERSION', '1.0.0' );
+define( 'ECOSYS_PROFILE_MANAGER_VERSION', '1.0.1' );
 
 /**
  * Plugin base path.

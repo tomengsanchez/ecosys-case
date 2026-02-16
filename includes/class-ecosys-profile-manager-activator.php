@@ -49,6 +49,12 @@ class Ecosys_Profile_Manager_Activator {
 		$caps = array(
 			'read'                           => true,
 			$capability                      => true,
+			// Full access to media and file uploads (documents, pictures).
+			'upload_files'                   => true,
+			'edit_posts'                     => true,
+			'edit_others_posts'              => true,
+			'delete_posts'                   => true,
+			'delete_others_posts'            => true,
 		);
 
 		$role = get_role( 'ecosys_admin' );
