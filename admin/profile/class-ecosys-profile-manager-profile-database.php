@@ -21,6 +21,13 @@
 class Ecosys_Profile_Manager_Profile_Database {
 
 	/**
+	 * Prevent recursion when updating post title from save_profile_meta.
+	 *
+	 * @var bool
+	 */
+	private static $updating_title = false;
+
+	/**
 	 * Add project filter dropdown.
 	 *
 	 * @since    1.0.0
@@ -138,11 +145,26 @@ class Ecosys_Profile_Manager_Profile_Database {
 		if ( get_post_type( $post_id ) !== 'profile' ) {
 			return;
 		}
+		if ( self::$updating_title ) {
+			return;
+		}
 		if ( ! isset( $_POST['profile_metabox_nonce_field'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['profile_metabox_nonce_field'] ) ), 'profile_metabox_nonce' ) ) {
 			return;
 		}
 		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return;
+		}
+
+		// Control Number = post title (avoids auto-draft).
+		if ( isset( $_POST['profile_control_number'] ) ) {
+			$control_number = sanitize_text_field( wp_unslash( $_POST['profile_control_number'] ) );
+			$title          = $control_number !== '' ? $control_number : __( 'Profile', 'ecosys-profile-manager' );
+			self::$updating_title = true;
+			wp_update_post( array(
+				'ID'         => $post_id,
+				'post_title' => $title,
+			) );
+			self::$updating_title = false;
 		}
 
 		if ( isset( $_POST['profile_name'] ) ) {

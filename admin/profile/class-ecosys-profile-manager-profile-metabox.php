@@ -64,6 +64,8 @@ class Ecosys_Profile_Manager_Profile_MetaBox {
 	public function render_profile_metabox( $post ) {
 		wp_nonce_field( 'profile_metabox_nonce', 'profile_metabox_nonce_field' );
 
+		// Control Number = post title (so post is not auto-draft)
+		$control_number = $post->post_title;
 		// Get existing values
 		$name = get_post_meta( $post->ID, '_profile_name', true );
 		$contact_number = get_post_meta( $post->ID, '_profile_contact_number', true );
@@ -74,6 +76,20 @@ class Ecosys_Profile_Manager_Profile_MetaBox {
 		$ses_data   = is_array( $ses_data ) ? $ses_data : ( ! empty( $ses_data ) ? (array) $ses_data : array() );
 		?>
 		<div style="padding: 15px 0;">
+			<div style="margin-bottom: 15px;">
+				<label for="profile_control_number" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;">
+					<?php _e( 'Control Number', 'ecosys-profile-manager' ); ?>
+				</label>
+				<input 
+					type="text" 
+					id="profile_control_number" 
+					name="profile_control_number" 
+					value="<?php echo esc_attr( $control_number ); ?>" 
+					style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;"
+				/>
+				<p style="color: #666; font-size: 11px; margin-top: 4px;"><?php esc_html_e( 'Used as the profile title so the post is saved properly.', 'ecosys-profile-manager' ); ?></p>
+			</div>
+
 			<div style="margin-bottom: 15px;">
 				<label for="profile_name" style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;">
 					<?php _e( 'Name', 'ecosys-profile-manager' ); ?>
