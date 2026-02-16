@@ -189,6 +189,7 @@ class Ecosys_Profile_Manager {
 		$this->loader->add_action( 'wp_ajax_ecosys_add_structure', $profile_metabox, 'ajax_add_structure' );
 		$this->loader->add_action( 'wp_ajax_ecosys_get_structure', $profile_metabox, 'ajax_get_structure' );
 		$this->loader->add_action( 'wp_ajax_ecosys_update_structure', $profile_metabox, 'ajax_update_structure' );
+		$this->loader->add_action( 'wp_ajax_ecosys_delete_structure', $profile_metabox, 'ajax_delete_structure' );
 
 		// Profile columns hooks
 		$profile_columns = new Ecosys_Profile_Manager_Profile_Columns();
