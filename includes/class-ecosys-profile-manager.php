@@ -192,9 +192,13 @@ class Ecosys_Profile_Manager {
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'maybe_remove_default_dashboard', 999 );
 		$this->loader->add_action( 'load-index.php', $plugin_admin, 'maybe_redirect_dashboard' );
 
-		// Settings options (used by Settings page and by new-profile notification)
+		// Settings options (used by Settings page, new-profile notification, and SMTP)
 		$settings_options = new Ecosys_Profile_Manager_Settings_Options();
 		$this->loader->add_action( 'transition_post_status', $settings_options, 'maybe_notify_new_profile', 10, 3 );
+		$this->loader->add_action( 'phpmailer_init', $settings_options, 'configure_phpmailer_smtp' );
+		$this->loader->add_action( 'wp_ajax_ecosys_send_test_mail', $settings_options, 'ajax_send_test_mail' );
+		$this->loader->add_action( 'wp_ajax_ecosys_get_email_debug_log', $settings_options, 'ajax_get_email_debug_log' );
+		$this->loader->add_action( 'wp_ajax_ecosys_clear_email_debug_log', $settings_options, 'ajax_clear_email_debug_log' );
 
 		// Plugin menu (submenu registration only; page UIs are in admin/pages)
 		$plugin_menu = new Ecosys_Profile_Manager_Menu( $this->get_plugin_name(), $this->get_version(), $settings_options );
