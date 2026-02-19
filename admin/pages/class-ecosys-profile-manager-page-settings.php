@@ -76,9 +76,21 @@ class Ecosys_Profile_Manager_Page_Settings {
 				</table>
 
 				<h2 class="title" style="margin-top: 24px;"><?php esc_html_e( 'SMTP Settings', 'ecosys-profile-manager' ); ?></h2>
-				<p class="description" style="margin-bottom: 12px;"><?php esc_html_e( 'Use SMTP instead of the default WordPress mail. Plugin emails (e.g. new profile notification) always use these settings when configured.', 'ecosys-profile-manager' ); ?></p>
+				<p class="description" style="margin-bottom: 12px;"><?php esc_html_e( 'Configure SMTP to send mail via a mail server. You can use WordPress default mail or SMTP. Test mail always uses SMTP (when configured) to verify your settings.', 'ecosys-profile-manager' ); ?></p>
 				<table class="form-table" role="presentation">
 					<tbody>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'Use SMTP', 'ecosys-profile-manager' ); ?></th>
+							<td>
+								<fieldset>
+									<label for="ecosys_smtp_use_smtp">
+										<input name="ecosys_smtp_use_smtp" type="checkbox" id="ecosys_smtp_use_smtp" value="1" <?php checked( ! empty( $smtp['use_smtp'] ) ); ?> />
+										<?php esc_html_e( 'Use SMTP for sending mail', 'ecosys-profile-manager' ); ?>
+									</label>
+									<p class="description"><?php esc_html_e( 'If unchecked, WordPress default mail (PHP mail()) is used for plugin and site emails. If checked, the SMTP settings below are used. Test mail always uses SMTP regardless.', 'ecosys-profile-manager' ); ?></p>
+								</fieldset>
+							</td>
+						</tr>
 						<tr>
 							<th scope="row"><label for="ecosys_smtp_host"><?php esc_html_e( 'SMTP Host', 'ecosys-profile-manager' ); ?></label></th>
 							<td>
@@ -135,7 +147,7 @@ class Ecosys_Profile_Manager_Page_Settings {
 										<input name="ecosys_smtp_use_for_entire_site" type="checkbox" id="ecosys_smtp_use_for_entire_site" value="1" <?php checked( ! empty( $smtp['use_for_entire_site'] ) ); ?> />
 										<?php esc_html_e( 'Use this SMTP for the entire WordPress site', 'ecosys-profile-manager' ); ?>
 									</label>
-									<p class="description"><?php esc_html_e( 'If checked, all outgoing mail (password resets, other plugins, etc.) will use this SMTP. If unchecked, only this plugin\'s emails use SMTP.', 'ecosys-profile-manager' ); ?></p>
+									<p class="description"><?php esc_html_e( 'If checked, all outgoing mail (password resets, other plugins, etc.) will use this SMTP. If unchecked, only this plugin\'s emails use SMTP. Requires "Use SMTP" above.', 'ecosys-profile-manager' ); ?></p>
 								</fieldset>
 							</td>
 						</tr>
@@ -299,6 +311,7 @@ class Ecosys_Profile_Manager_Page_Settings {
 		if ( isset( $_POST['ecosys_smtp_from_name'] ) ) {
 			$smtp['from_name'] = sanitize_text_field( wp_unslash( $_POST['ecosys_smtp_from_name'] ) );
 		}
+		$smtp['use_smtp']            = isset( $_POST['ecosys_smtp_use_smtp'] );
 		$smtp['use_for_entire_site'] = isset( $_POST['ecosys_smtp_use_for_entire_site'] );
 		$this->options->save_smtp_options( $smtp );
 

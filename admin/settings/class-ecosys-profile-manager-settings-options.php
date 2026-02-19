@@ -51,12 +51,20 @@ class Ecosys_Profile_Manager_Settings_Options {
 	const DEBUG_LOG_MAX_BYTES = 100000;
 
 	/**
-	 * Flag set to true when the plugin is sending mail (so SMTP is used even if "use for entire site" is off).
+	 * Flag set to true when the plugin is sending mail (so SMTP is used when use_smtp is on).
 	 *
 	 * @since    1.0.0
 	 * @var      bool
 	 */
 	public static $sending_plugin_mail = false;
+
+	/**
+	 * Flag set to true when sending a test mail (always uses SMTP when configured, regardless of use_smtp).
+	 *
+	 * @since    1.0.0
+	 * @var      bool
+	 */
+	public static $sending_test_mail = false;
 
 	/**
 	 * Buffer for current request's PHPMailer debug output.
@@ -162,6 +170,7 @@ class Ecosys_Profile_Manager_Settings_Options {
 	 */
 	public static function get_smtp_defaults() {
 		return array(
+			'use_smtp'            => false,
 			'host'                => '',
 			'port'                => '587',
 			'encryption'          => 'tls',
@@ -203,7 +212,7 @@ class Ecosys_Profile_Manager_Settings_Options {
 				continue;
 			}
 			$val = $options[ $key ];
-			if ( $key === 'use_for_entire_site' ) {
+			if ( $key === 'use_for_entire_site' || $key === 'use_smtp' ) {
 				$out[ $key ] = (bool) $val;
 			} elseif ( $key === 'port' ) {
 				$out[ $key ] = absint( $val );
@@ -246,10 +255,13 @@ class Ecosys_Profile_Manager_Settings_Options {
 
 		$opts = $this->get_smtp_options();
 
-		$use_globally = ! empty( $opts['use_for_entire_site'] );
-		$plugin_mail = self::$sending_plugin_mail;
+		$use_smtp      = ! empty( $opts['use_smtp'] );
+		$use_globally  = ! empty( $opts['use_for_entire_site'] );
+		$plugin_mail   = self::$sending_plugin_mail;
+		$test_mail     = self::$sending_test_mail;
 
-		if ( ! $use_globally && ! $plugin_mail ) {
+		$should_use_smtp = $test_mail || ( $use_smtp && ( $use_globally || $plugin_mail ) );
+		if ( ! $should_use_smtp ) {
 			return;
 		}
 
@@ -364,10 +376,10 @@ class Ecosys_Profile_Manager_Settings_Options {
 		$body = __( 'This is a test email from your Ecosys Profile Manager SMTP settings.', 'ecosys-profile-manager' ) . "\n\n";
 		$body .= __( 'If you received this, SMTP is working correctly.', 'ecosys-profile-manager' );
 
-		self::$sending_plugin_mail = true;
+		self::$sending_test_mail  = true;
 		self::$debug_log_context  = __( 'Test email', 'ecosys-profile-manager' ) . ' → ' . $to;
 		$sent = wp_mail( $to, $subject, $body );
-		self::$sending_plugin_mail = false;
+		self::$sending_test_mail  = false;
 		self::$debug_log_context  = '';
 
 		if ( $sent ) {
