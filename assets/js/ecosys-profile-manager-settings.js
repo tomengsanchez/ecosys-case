@@ -51,6 +51,7 @@
 			html += '<th>' + (i18n.status || 'Status') + '</th>';
 			html += '<th>' + (i18n.source || 'Source') + '</th>';
 			html += '<th>' + (i18n.error || 'Error') + '</th>';
+			html += '<th>' + (i18n.response || 'Response') + '</th>';
 			html += '</tr></thead><tbody>';
 			logs.forEach(function (log) {
 				var statusClass = log.success ? 'ecosys-log-success' : 'ecosys-log-failed';
@@ -61,7 +62,8 @@
 				html += '<td>' + escapeHtml(log.subject || '') + '</td>';
 				html += '<td class="' + statusClass + '">' + escapeHtml(statusText) + '</td>';
 				html += '<td>' + escapeHtml(log.source || '') + '</td>';
-				html += '<td>' + escapeHtml(log.error || '') + '</td>';
+				html += '<td class="ecosys-log-error">' + escapeHtml(log.error || '') + '</td>';
+				html += '<td class="ecosys-log-response">' + escapeHtml(log.response || '') + '</td>';
 				html += '</tr>';
 			});
 			html += '</tbody></table>';
@@ -79,9 +81,31 @@
 			$modal.attr('aria-hidden', 'true').hide();
 		}
 
+		function clearLogs() {
+			var $clearBtn = $('#ecosys-clear-email-logs');
+			$clearBtn.prop('disabled', true);
+			$.ajax({
+				url: (typeof ecosysSettings !== 'undefined') ? ecosysSettings.ajaxUrl : '',
+				type: 'POST',
+				data: {
+					action: 'ecosys_clear_email_logs',
+					nonce: (typeof ecosysSettings !== 'undefined') ? ecosysSettings.nonce : ''
+				},
+				success: function (res) {
+					if (res.success) {
+						$content.html('<p>' + (i18n.noLogs || 'No email logs yet.') + '</p>');
+					}
+				},
+				complete: function () {
+					$clearBtn.prop('disabled', false);
+				}
+			});
+		}
+
 		$btn.on('click', showModal);
 		$close.on('click', hideModal);
 		$overlay.on('click', hideModal);
+		$(document).on('click', '#ecosys-clear-email-logs', clearLogs);
 
 		$(document).on('keydown.ecosysModal', function (e) {
 			if (e.key === 'Escape' && $modal.is(':visible')) {
@@ -90,9 +114,27 @@
 		});
 	}
 
+	function initSmtpToggle() {
+		var $cb = $('#ecosys_use_custom_smtp');
+		var $wrap = $('#ecosys-smtp-config-wrap');
+		var $row = $('#ecosys-smtp-config-row');
+
+		function toggleSmtpFields() {
+			var enabled = $cb.is(':checked');
+			$wrap.find('input, select').prop('disabled', !enabled);
+			$row.toggleClass('ecosys-smtp-disabled', !enabled);
+		}
+
+		$cb.on('change', toggleSmtpFields);
+		toggleSmtpFields();
+	}
+
 	$(function () {
 		if ($('#ecosys-view-email-logs').length) {
 			initEmailLogsModal();
+		}
+		if ($('#ecosys_use_custom_smtp').length) {
+			initSmtpToggle();
 		}
 	});
 })(jQuery);

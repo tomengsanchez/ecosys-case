@@ -32,8 +32,9 @@
 	background: #fff;
 	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 	border-radius: 4px;
-	max-width: 700px;
+	max-width: 95vw;
 	width: 90%;
+	min-width: 700px;
 	max-height: 80vh;
 	display: flex;
 	flex-direction: column;
@@ -45,6 +46,12 @@
 	justify-content: space-between;
 	padding: 16px 20px;
 	border-bottom: 1px solid #c3c4c7;
+}
+
+.ecosys-modal-header-actions {
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
 .ecosys-modal-header h2 {
@@ -68,7 +75,7 @@
 
 .ecosys-modal-body {
 	padding: 20px;
-	overflow-y: auto;
+	overflow: auto;
 	flex: 1;
 }
 
@@ -94,10 +101,29 @@
 	background: #f6f7f7;
 }
 
+.ecosys-email-logs-table .ecosys-log-error,
+.ecosys-email-logs-table .ecosys-log-response {
+	white-space: pre-wrap;
+	word-break: break-word;
+	max-width: 320px;
+	min-width: 120px;
+	vertical-align: top;
+}
+
 .ecosys-log-success {
 	color: #00a32a;
 }
 
 .ecosys-log-failed {
 	color: #d63638;
+}
+
+.ecosys-smtp-disabled .ecosys-smtp-fields input,
+.ecosys-smtp-disabled .ecosys-smtp-fields select {
+	opacity: 0.6;
+	pointer-events: none;
+}
+
+.ecosys-smtp-fields .form-table th {
+	padding-left: 0;
 }

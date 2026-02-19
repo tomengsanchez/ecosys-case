@@ -202,6 +202,8 @@ class Ecosys_Profile_Manager {
 		$settings_options = new Ecosys_Profile_Manager_Settings_Options( $email_logger );
 		$this->loader->add_action( 'wp_mail_failed', $email_logger, 'on_wp_mail_failed', 10, 2 );
 		$this->loader->add_action( 'wp_ajax_ecosys_get_email_logs', $email_logger, 'ajax_get_logs' );
+		$this->loader->add_action( 'wp_ajax_ecosys_clear_email_logs', $email_logger, 'ajax_clear_logs' );
+		$this->loader->add_action( 'phpmailer_init', $settings_options, 'phpmailer_init_smtp', 10, 1 );
 		$this->loader->add_action( 'transition_post_status', $settings_options, 'maybe_notify_new_profile', 10, 3 );
 
 		// Plugin menu (submenu registration only; page UIs are in admin/pages)

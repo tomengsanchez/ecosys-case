@@ -204,6 +204,9 @@ class Ecosys_Profile_Manager_Menu {
 					'success'     => __( 'Success', 'ecosys-profile-manager' ),
 					'failed'      => __( 'Failed', 'ecosys-profile-manager' ),
 					'error'       => __( 'Error', 'ecosys-profile-manager' ),
+					'response'    => __( 'Response', 'ecosys-profile-manager' ),
+					'clearLogs'   => __( 'Clear Logs', 'ecosys-profile-manager' ),
+					'logsCleared' => __( 'Logs cleared.', 'ecosys-profile-manager' ),
 				),
 			)
 		);
