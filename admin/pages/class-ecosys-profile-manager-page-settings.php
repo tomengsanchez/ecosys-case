@@ -40,8 +40,10 @@ class Ecosys_Profile_Manager_Page_Settings {
 	 * @since    1.0.0
 	 */
 	public function render() {
-		$updated = false;
-		if ( $this->maybe_save() ) {
+		$updated  = false;
+		$test_msg = $this->maybe_send_test_mail();
+		// Only save when not sending test mail (test mail button submit would overwrite checkbox state).
+		if ( ! isset( $_POST['ecosys_send_test_mail'] ) && $this->maybe_save() ) {
 			$updated = true;
 		}
 
@@ -51,6 +53,9 @@ class Ecosys_Profile_Manager_Page_Settings {
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 			<?php if ( $updated ) : ?>
 				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Settings saved.', 'ecosys-profile-manager' ); ?></p></div>
+			<?php endif; ?>
+			<?php if ( $test_msg ) : ?>
+				<div class="notice notice-<?php echo $test_msg['success'] ? 'success' : 'error'; ?> is-dismissible"><p><?php echo esc_html( $test_msg['message'] ); ?></p></div>
 			<?php endif; ?>
 
 			<form method="post" action="">
@@ -71,12 +76,79 @@ class Ecosys_Profile_Manager_Page_Settings {
 								</fieldset>
 							</td>
 						</tr>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'Test Email', 'ecosys-profile-manager' ); ?></th>
+							<td>
+								<?php wp_nonce_field( 'ecosys_test_mail', 'ecosys_test_mail_nonce' ); ?>
+								<input type="email" name="ecosys_test_email_to" id="ecosys_test_email_to" value="<?php echo esc_attr( get_option( 'admin_email' ) ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'email@example.com', 'ecosys-profile-manager' ); ?>" />
+								<button type="submit" name="ecosys_send_test_mail" value="1" class="button button-secondary">
+									<?php esc_html_e( 'Send Test Email', 'ecosys-profile-manager' ); ?>
+								</button>
+								<p class="description"><?php esc_html_e( 'Enter an email address and click to send a test email.', 'ecosys-profile-manager' ); ?></p>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'Email Debug Logs', 'ecosys-profile-manager' ); ?></th>
+							<td>
+								<button type="button" id="ecosys-view-email-logs" class="button button-secondary">
+									<?php esc_html_e( 'View Email Debug Logs', 'ecosys-profile-manager' ); ?>
+								</button>
+								<p class="description"><?php esc_html_e( 'View recent email send attempts for debugging.', 'ecosys-profile-manager' ); ?></p>
+							</td>
+						</tr>
 					</tbody>
 				</table>
 				<?php submit_button( __( 'Save Settings', 'ecosys-profile-manager' ) ); ?>
 			</form>
+
+			<div id="ecosys-email-logs-modal" class="ecosys-modal" aria-hidden="true" style="display:none;">
+				<div class="ecosys-modal-overlay"></div>
+				<div class="ecosys-modal-content">
+					<div class="ecosys-modal-header">
+						<h2><?php esc_html_e( 'Email Debug Logs', 'ecosys-profile-manager' ); ?></h2>
+						<button type="button" class="ecosys-modal-close" aria-label="<?php esc_attr_e( 'Close', 'ecosys-profile-manager' ); ?>">&times;</button>
+					</div>
+					<div class="ecosys-modal-body">
+						<div id="ecosys-email-logs-content"><p><?php esc_html_e( 'Loading…', 'ecosys-profile-manager' ); ?></p></div>
+					</div>
+				</div>
+			</div>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Send test email if requested and nonce/capability are valid.
+	 *
+	 * @since    1.0.0
+	 * @return   array|null Message with 'success' and 'message' keys, or null if not requested.
+	 */
+	private function maybe_send_test_mail() {
+		if ( ! isset( $_POST['ecosys_send_test_mail'], $_POST['ecosys_test_mail_nonce'] ) ) {
+			return null;
+		}
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['ecosys_test_mail_nonce'] ) ), 'ecosys_test_mail' ) ) {
+			return null;
+		}
+		if ( ! current_user_can( 'manage_ecosys_profile_manager' ) ) {
+			return null;
+		}
+		$to = isset( $_POST['ecosys_test_email_to'] ) ? sanitize_email( wp_unslash( $_POST['ecosys_test_email_to'] ) ) : '';
+		if ( empty( $to ) ) {
+			$to = get_option( 'admin_email' );
+		} elseif ( ! is_email( $to ) ) {
+			return array(
+				'success' => false,
+				'message' => __( 'Please enter a valid email address.', 'ecosys-profile-manager' ),
+			);
+		}
+		$sent = $this->options->send_test_email( $to );
+		return array(
+			'success' => $sent,
+			'message' => $sent
+				? __( 'Test email sent successfully. Check your inbox.', 'ecosys-profile-manager' )
+				: __( 'Failed to send test email. Check your email configuration.', 'ecosys-profile-manager' ),
+		);
 	}
 
 	/**

@@ -163,6 +163,53 @@ class Ecosys_Profile_Manager_Menu {
 	}
 
 	/**
+	 * Enqueue settings page scripts (email debug logs modal).
+	 *
+	 * @since    1.0.0
+	 */
+	public function enqueue_settings_scripts( $hook ) {
+		$settings_hook = $this->menu_slug . '_page_' . $this->menu_slug . '-settings';
+		if ( $hook !== $settings_hook ) {
+			return;
+		}
+		wp_enqueue_style(
+			$this->plugin_name . '-settings',
+			ECOSYS_PROFILE_MANAGER_URL . 'assets/css/ecosys-profile-manager-settings.css',
+			array(),
+			$this->version
+		);
+		wp_enqueue_script(
+			$this->plugin_name . '-settings',
+			ECOSYS_PROFILE_MANAGER_URL . 'assets/js/ecosys-profile-manager-settings.js',
+			array( 'jquery' ),
+			$this->version,
+			true
+		);
+		wp_localize_script(
+			$this->plugin_name . '-settings',
+			'ecosysSettings',
+			array(
+				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
+				'nonce'   => wp_create_nonce( 'ecosys_email_logs' ),
+				'i18n'    => array(
+					'viewLogs'    => __( 'View Email Debug Logs', 'ecosys-profile-manager' ),
+					'loading'     => __( 'Loading…', 'ecosys-profile-manager' ),
+					'noLogs'      => __( 'No email logs yet.', 'ecosys-profile-manager' ),
+					'close'       => __( 'Close', 'ecosys-profile-manager' ),
+					'time'        => __( 'Time', 'ecosys-profile-manager' ),
+					'to'          => __( 'To', 'ecosys-profile-manager' ),
+					'subject'     => __( 'Subject', 'ecosys-profile-manager' ),
+					'status'      => __( 'Status', 'ecosys-profile-manager' ),
+					'source'      => __( 'Source', 'ecosys-profile-manager' ),
+					'success'     => __( 'Success', 'ecosys-profile-manager' ),
+					'failed'      => __( 'Failed', 'ecosys-profile-manager' ),
+					'error'       => __( 'Error', 'ecosys-profile-manager' ),
+				),
+			)
+		);
+	}
+
+	/**
 	 * Render the Settings page (delegates to page class).
 	 *
 	 * @since    1.0.0

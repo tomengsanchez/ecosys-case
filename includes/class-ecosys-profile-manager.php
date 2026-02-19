@@ -99,6 +99,11 @@ class Ecosys_Profile_Manager {
 		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/class-ecosys-profile-manager-menu.php';
 
 		/**
+		 * Settings: email logger for debug.
+		 */
+		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/settings/class-ecosys-profile-manager-email-logger.php';
+
+		/**
 		 * Settings: options (get/save) and notification logic.
 		 */
 		require_once ECOSYS_PROFILE_MANAGER_PATH . 'admin/settings/class-ecosys-profile-manager-settings-options.php';
@@ -192,13 +197,17 @@ class Ecosys_Profile_Manager {
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'maybe_remove_default_dashboard', 999 );
 		$this->loader->add_action( 'load-index.php', $plugin_admin, 'maybe_redirect_dashboard' );
 
-		// Settings options (used by Settings page and by new-profile notification)
-		$settings_options = new Ecosys_Profile_Manager_Settings_Options();
+		// Email logger and settings options
+		$email_logger     = new Ecosys_Profile_Manager_Email_Logger();
+		$settings_options = new Ecosys_Profile_Manager_Settings_Options( $email_logger );
+		$this->loader->add_action( 'wp_mail_failed', $email_logger, 'on_wp_mail_failed', 10, 2 );
+		$this->loader->add_action( 'wp_ajax_ecosys_get_email_logs', $email_logger, 'ajax_get_logs' );
 		$this->loader->add_action( 'transition_post_status', $settings_options, 'maybe_notify_new_profile', 10, 3 );
 
 		// Plugin menu (submenu registration only; page UIs are in admin/pages)
 		$plugin_menu = new Ecosys_Profile_Manager_Menu( $this->get_plugin_name(), $this->get_version(), $settings_options );
 		$this->loader->add_action( 'admin_menu', $plugin_menu, 'add_admin_menu' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_menu, 'enqueue_settings_scripts' );
 
 		// Profile metabox hooks
 		$profile_metabox = new Ecosys_Profile_Manager_Profile_MetaBox( $this->get_plugin_name() );

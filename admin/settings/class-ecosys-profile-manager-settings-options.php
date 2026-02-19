@@ -19,6 +19,22 @@
 class Ecosys_Profile_Manager_Settings_Options {
 
 	/**
+	 * Email logger instance (optional).
+	 *
+	 * @since    1.0.0
+	 * @var      Ecosys_Profile_Manager_Email_Logger|null
+	 */
+	private $email_logger;
+
+	/**
+	 * @since    1.0.0
+	 * @param    Ecosys_Profile_Manager_Email_Logger|null $email_logger Optional. For debug logging.
+	 */
+	public function __construct( Ecosys_Profile_Manager_Email_Logger $email_logger = null ) {
+		$this->email_logger = $email_logger;
+	}
+
+	/**
 	 * Option key: notify admin when a new profile is added.
 	 *
 	 * @since    1.0.0
@@ -90,6 +106,48 @@ class Ecosys_Profile_Manager_Settings_Options {
 		$body        .= __( 'Control Number:', 'ecosys-profile-manager' ) . ' ' . $post->post_title . "\n";
 		$body        .= __( 'Name:', 'ecosys-profile-manager' ) . ' ' . ( $profile_name ? $profile_name : '—' ) . "\n";
 		$body        .= __( 'Edit:', 'ecosys-profile-manager' ) . ' ' . $edit_link . "\n";
-		wp_mail( $to, $subject, $body );
+		$sent = wp_mail( $to, $subject, $body );
+		if ( $this->email_logger ) {
+			$this->email_logger->log( $to, $subject, $sent, 'new_profile', $sent ? '' : __( 'wp_mail returned false', 'ecosys-profile-manager' ) );
+		}
+	}
+
+	/**
+	 * Send a test email to the given address.
+	 *
+	 * @since    1.0.0
+	 * @param    string $to Optional. Recipient email. Defaults to admin_email.
+	 * @return   bool True if mail was sent successfully.
+	 */
+	public function send_test_email( $to = '' ) {
+		if ( empty( $to ) || ! is_email( $to ) ) {
+			$to = get_option( 'admin_email' );
+		}
+		$subject = sprintf(
+			/* translators: %s: site name */
+			__( '[%s] Test email from Ecosys Profile Manager', 'ecosys-profile-manager' ),
+			get_bloginfo( 'name' )
+		);
+		$body = __( 'This is a test email. Your email settings are working correctly.', 'ecosys-profile-manager' ) . "\n\n";
+		$body .= sprintf(
+			/* translators: %s: site URL */
+			__( 'Sent from: %s', 'ecosys-profile-manager' ),
+			home_url()
+		);
+		$sent = wp_mail( $to, $subject, $body );
+		if ( $this->email_logger ) {
+			$this->email_logger->log( $to, $subject, $sent, 'test_email', $sent ? '' : __( 'wp_mail returned false', 'ecosys-profile-manager' ) );
+		}
+		return $sent;
+	}
+
+	/**
+	 * Get the email logger instance.
+	 *
+	 * @since    1.0.0
+	 * @return   Ecosys_Profile_Manager_Email_Logger|null
+	 */
+	public function get_email_logger() {
+		return $this->email_logger;
 	}
 }

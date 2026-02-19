@@ -1,0 +1,103 @@
+/**
+ * Ecosys Profile Manager - Settings page (email logs modal)
+ *
+ * @package Ecosys_Profile_Manager
+ * @since 1.0.0
+ */
+
+.ecosys-modal {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 100000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.ecosys-modal-overlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.6);
+	cursor: pointer;
+}
+
+.ecosys-modal-content {
+	position: relative;
+	background: #fff;
+	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+	border-radius: 4px;
+	max-width: 700px;
+	width: 90%;
+	max-height: 80vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.ecosys-modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 16px 20px;
+	border-bottom: 1px solid #c3c4c7;
+}
+
+.ecosys-modal-header h2 {
+	margin: 0;
+	font-size: 1.3em;
+}
+
+.ecosys-modal-close {
+	background: none;
+	border: none;
+	font-size: 24px;
+	line-height: 1;
+	cursor: pointer;
+	color: #50575e;
+	padding: 0 4px;
+}
+
+.ecosys-modal-close:hover {
+	color: #000;
+}
+
+.ecosys-modal-body {
+	padding: 20px;
+	overflow-y: auto;
+	flex: 1;
+}
+
+.ecosys-email-logs-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 13px;
+}
+
+.ecosys-email-logs-table th,
+.ecosys-email-logs-table td {
+	text-align: left;
+	padding: 8px 12px;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.ecosys-email-logs-table th {
+	background: #f6f7f7;
+	font-weight: 600;
+}
+
+.ecosys-email-logs-table tr:hover td {
+	background: #f6f7f7;
+}
+
+.ecosys-log-success {
+	color: #00a32a;
+}
+
+.ecosys-log-failed {
+	color: #d63638;
+}
